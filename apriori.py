@@ -36,18 +36,27 @@ def generate_candidates(L_k, k):
     # append their union to candidates if the union is 
     # one element larger than an itemset in L_k 
     # (emulate self joining L_k)
+    candidates = set()
     for item in itertools.combinations(L_k, 2):
-        u = union(item[0], item[1])
-        if len(u) == k+1:
-            candidates.append(u)
+        union_ = frozenset(item[0] + item[1])
+        if len(union_) == k+1:
+            candidates.add(union_)
     
-    # Prune
-    for candidate in candidates:
-        for itemset in L_k:
-            if not set(itemset).issubset(set(candidate)):
-                candidates.remove(candidate)
-                break
+    # Convert candidates from set to list type
+    candidates = [list(candidate) for candidate in candidates]
 
+    # Prune
+    # TODO: Verify this works for all edge cases
+    candidates_to_remove = []
+    for candidate in candidates:
+        # if theres any itemset of size k in candidates that are not in L_k, add it to the
+        # list of candidates to be removed
+        if any([c for c in itertools.combinations(candidate, k) if not any([it for it in L_k if len(set(c) & set(it)) == k])]):
+            candidates_to_remove.append(candidate)
+    
+    for i in candidates_to_remove:
+        candidates.remove(i)
+    
     return candidates
 
 def count_candidates(C, transaction):
