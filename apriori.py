@@ -77,7 +77,7 @@ def min_support_candidates(candidates, min_support):
     frequent_candidates = []
     for candidate in candidates:
         if candidate.count >= min_support:
-            frequent_candidates.append(list(candidate))
+            frequent_candidates.append(candidate)
     return frequent_candidates
 
 def apriori_(data, frequency):
@@ -92,7 +92,9 @@ def apriori_(data, frequency):
 
     # We let item j be the column index and thus get the column indices
     # whose column sum satisfies min frequency requirement
-    L = [[item[0]] for item in enumerate(bool_freq_array) if item[1]]
+    L = [CandidateItem([item[0]]) for item in enumerate(bool_freq_array) if item[1]]
+    for elem in L:
+        elem.count+=single_itemset_count[elem[0]]
     union_L = []
     while len(L) != 0:
         union_L.append(L)
@@ -109,4 +111,5 @@ def apriori_(data, frequency):
 if __name__ == "__main__":
     # Load data
     data = sio.loadmat(DATA_FILE_LOCATION)['data']
-
+    
+    results = apriori_(data, 0.15)
