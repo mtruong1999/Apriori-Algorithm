@@ -56,7 +56,7 @@ def generate_candidates(L_k, k):
         if any([c for c in itertools.combinations(candidate, k) if not any([it for it in L_k if len(set(c) & set(it)) == k])]):
             candidates_to_remove.append(candidate)
     
-    for i in candidates_to_remove:
+    for i in candidates_to_remove: # maybe create an array of true/false and filter the candidates array by that
         candidates.remove(i)
     
     return candidates
@@ -92,7 +92,7 @@ def apriori_(data, frequency):
 
     # We let item j be the column index and thus get the column indices
     # whose column sum satisfies min frequency requirement
-    L = [item[0] for item in enumerate(bool_freq_array) if item[1]]
+    L = [[item[0]] for item in enumerate(bool_freq_array) if item[1]]
     union_L = []
     while len(L) != 0:
         union_L.append(L)
