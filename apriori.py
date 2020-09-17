@@ -8,6 +8,7 @@ Author: Michael Truong
 import os
 import time
 import itertools
+from optparse import OptionParser
 import scipy.io as sio
 import numpy as np
 
@@ -106,10 +107,41 @@ def apriori_(data, frequency):
     
     return union_L
 
+def find_closed_itemsets(frequent_itemsets):
+    '''Takes in a list where each kth element is a list containing
+    all of the frequent k-itemsets and returns all of the closed
+    itemsets'''
 
+    closed_itemsets = []
+
+    return closed_itemsets
 
 if __name__ == "__main__":
+    
+    optparser = OptionParser()
+    optparser.add_option('-o', '--outfile',
+                        dest='output_file',
+                        help='filename for .mat input file',
+                        default='results.txt')
+
+    optparser.add_option('-s', '--minsupport',
+                        dest='min_support',
+                        help='minimum support for apriori algorithm (0-1)',
+                        default = 0.15,
+                        type='float')
+    
+    (options, args) = optparser.parse_args()
+
     # Load data
     data = sio.loadmat(DATA_FILE_LOCATION)['data']
-    
-    results = apriori_(data, 0.15)
+    output_file = options.output_file
+    min_support = options.min_support
+
+
+    all_frequent_itemsets = apriori_(data, min_support)
+    closed_itemsets = find_closed_itemsets(all_frequent_itemsets)
+
+    with open(output_file, "w") as f:
+        for L in all_frequent_itemsets:
+            for itemset in L:
+                f.write("Itemset: {}\tFrequency: {}\n".format(itemset, itemset.count))
