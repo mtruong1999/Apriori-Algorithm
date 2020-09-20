@@ -15,7 +15,7 @@ import numpy as np
 DATA_FILE_LOCATION = os.path.join('data', 'dataAPRIORI.mat')
 MIN_SUP = 0.15
 
-class CandidateItem(list):
+class CandidateItem(set):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.count = 0
@@ -41,11 +41,11 @@ def generate_candidates(L_k, k):
     # (emulate self joining L_k)
     candidates = set()
     for item in itertools.combinations(L_k, 2):
-        union_ = frozenset(item[0] + item[1])
+        union_ = frozenset(item[0].union(item[1]))
         if len(union_) == k+1:
             candidates.add(union_)
     
-    # Convert candidates from set to list type
+    # Convert candidates into a list with each candidate converted to custom set
     candidates = [CandidateItem(candidate) for candidate in candidates]
 
     # Prune
@@ -95,7 +95,9 @@ def apriori_(data, frequency):
     # whose column sum satisfies min frequency requirement
     L = [CandidateItem([item[0]]) for item in enumerate(bool_freq_array) if item[1]]
     for elem in L:
-        elem.count+=single_itemset_count[elem[0]]
+        for idx in elem:
+            elem.count += single_itemset_count[idx]
+
     union_L = []
     while len(L) != 0:
         union_L.append(L)
