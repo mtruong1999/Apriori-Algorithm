@@ -11,6 +11,7 @@ import itertools
 from optparse import OptionParser
 import scipy.io as sio
 import numpy as np
+from tabulate import tabulate
 
 DATA_FILE_LOCATION = os.path.join('data', 'dataAPRIORI.mat')
 MIN_SUP = 0.15
@@ -114,7 +115,27 @@ def find_closed_itemsets(frequent_itemsets):
     all of the frequent k-itemsets and returns all of the closed
     itemsets'''
 
+    # For O(n) complexity, we create a frequent itemset dictionary
+    # where each key is the absolute frequency count
+    frequent_dict = {}
+    for itemset in itertools.chain.from_iterable(frequent_itemsets):
+        if itemset.count not in frequent_dict:
+            frequent_dict[itemset.count] = [itemset]
+        else:
+            frequent_dict[itemset.count].append(itemset)
+
+    # Find closed itemsets
     closed_itemsets = []
+    for itemset in itertools.chain.from_iterable(frequent_itemsets):
+        is_closed_itemset = True
+        same_frequency_set = frequent_dict[itemset.count]
+        for i in same_frequency_set:
+                if itemset != i:
+                    if itemset.issubset(i):
+                        is_closed_itemset = False
+                        break
+        if is_closed_itemset:
+            closed_itemsets.append(itemset)
 
     return closed_itemsets
 
@@ -124,7 +145,7 @@ if __name__ == "__main__":
     optparser.add_option('-o', '--outfile',
                         dest='output_file',
                         help='filename for .mat input file',
-                        default='results.txt')
+                        default='all_frequent_itemsets.txt')
 
     optparser.add_option('-s', '--minsupport',
                         dest='min_support',
@@ -141,9 +162,19 @@ if __name__ == "__main__":
 
 
     all_frequent_itemsets = apriori_(data, min_support)
+
     closed_itemsets = find_closed_itemsets(all_frequent_itemsets)
 
     with open(output_file, "w") as f:
+        table = []
         for L in all_frequent_itemsets:
             for itemset in L:
-                f.write("Itemset: {}\tFrequency: {}\n".format(itemset, itemset.count))
+                table.append([set(itemset),itemset.count])
+        f.write(tabulate(table, headers = ['Frequent Itemset', 'Count']))
+    
+    total_number_transactions = data.shape[0]
+    with open('closed_itemsets.txt', 'w') as f:
+        table = []
+        for closed_itemset in closed_itemsets:
+            table.append([set(closed_itemset), closed_itemset.count/total_number_transactions,closed_itemset.count])
+        f.write(tabulate(table, headers = ['Closed Itemset', 'Relative Freq.', 'Absolute Freq.']))
