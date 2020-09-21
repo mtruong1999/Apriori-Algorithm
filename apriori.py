@@ -13,6 +13,8 @@ import scipy.io as sio
 import numpy as np
 from tabulate import tabulate
 
+TIMING_RESULT_OUTPUT_FILE = os.path.join('results','timing_result.txt')
+
 class CandidateItem(set):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -147,12 +149,12 @@ if __name__ == "__main__":
     optparser.add_option('-a', '--allFrequentOut',
                         dest='all_frequent_output_file',
                         help='output filename for table of all frequent itemsets',
-                        default='all_frequent_itemsets.txt')
+                        default=os.path.join('results','all_frequent_itemsets.txt'))
 
     optparser.add_option('-c', '--closedItemsetsOut',
                         dest='closed_itemsets_output_file',
                         help='output filename for table of all closed itemsets',
-                        default='closed_itemsets.txt')
+                        default=os.path.join('results','closed_itemsets.txt'))
 
     optparser.add_option('-s', '--minsupport',
                         dest='min_support',
@@ -175,9 +177,11 @@ if __name__ == "__main__":
     # Load data
     data = sio.loadmat(input_file)['data']
 
+    # Run apriori on data, find closed itemsets, and measure running time
+    start_time = time.time()
     all_frequent_itemsets = apriori_(data, min_support)
-
     closed_itemsets = find_closed_itemsets(all_frequent_itemsets)
+    time_elapsed = time.time() - start_time
 
     with open(all_frequent_output_file, "w") as f:
         table = []
@@ -192,3 +196,6 @@ if __name__ == "__main__":
         for closed_itemset in closed_itemsets:
             table.append([set(closed_itemset), closed_itemset.count/total_number_transactions,closed_itemset.count])
         f.write(tabulate(table, headers = ['Closed Itemset', 'Relative Freq.', 'Absolute Freq.']))
+
+    with open(TIMING_RESULT_OUTPUT_FILE, 'w') as f:
+        f.write('Running time: {} seconds'.format(time_elapsed))
