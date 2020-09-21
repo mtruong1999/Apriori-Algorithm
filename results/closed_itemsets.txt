@@ -1,3 +1,4 @@
+Note: Zero-index convention is used for item labels, i.e. the first column is considered item 0.
 Closed Itemset      Relative Freq.    Absolute Freq.
 ----------------  ----------------  ----------------
 {1}                           0.15                 3

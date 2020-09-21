@@ -2,6 +2,8 @@
 ## Overview
 The code implements the apriori algorithm to find all frequent itemsets and extract the closed itemsets. The input data is assumed to be a 2-D matrix where each row is a transaction and each column j indicates (using 1 or 0) whether item j is present.
 
+Note: We follow a zero-index convention in our item labels, i.e. we consider the first column of the data matrix to be item `0`.
+
 The closed itemsets and running time measurement results can be found in the `results/` directory. 
 
 ## Setup

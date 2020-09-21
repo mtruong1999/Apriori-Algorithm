@@ -188,6 +188,7 @@ if __name__ == "__main__":
         for L in all_frequent_itemsets:
             for itemset in L:
                 table.append([set(itemset),itemset.count])
+        f.write('Note: Zero-index convention is used for item labels, i.e. the first column is considered item 0.\n')
         f.write(tabulate(table, headers = ['Frequent Itemset', 'Count']))
     
     total_number_transactions = data.shape[0]
@@ -195,6 +196,7 @@ if __name__ == "__main__":
         table = []
         for closed_itemset in closed_itemsets:
             table.append([set(closed_itemset), closed_itemset.count/total_number_transactions,closed_itemset.count])
+        f.write('Note: Zero-index convention is used for item labels, i.e. the first column is considered item 0.\n')
         f.write(tabulate(table, headers = ['Closed Itemset', 'Relative Freq.', 'Absolute Freq.']))
 
     with open(TIMING_RESULT_OUTPUT_FILE, 'w') as f:

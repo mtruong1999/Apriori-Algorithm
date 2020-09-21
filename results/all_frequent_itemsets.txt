@@ -1,3 +1,4 @@
+Note: Zero-index convention is used for item labels, i.e. the first column is considered item 0.
 Frequent Itemset      Count
 ------------------  -------
 {0}                       5
