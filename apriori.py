@@ -13,8 +13,6 @@ import scipy.io as sio
 import numpy as np
 from tabulate import tabulate
 
-DATA_FILE_LOCATION = os.path.join('data', 'dataAPRIORI.mat')
-MIN_SUP = 0.15
 
 class CandidateItem(set):
     def __init__(self, *args, **kwargs):
@@ -144,12 +142,12 @@ if __name__ == "__main__":
     optparser = OptionParser()
     optparser.add_option('-a', '--allFrequentOut',
                         dest='all_frequent_output_file',
-                        help='filename for .mat input file',
+                        help='output filename for table of all frequent itemsets',
                         default='all_frequent_itemsets.txt')
 
     optparser.add_option('-c', '--closedItemsetsOut',
                         dest='closed_itemsets_output_file',
-                        help='filename for .mat input file',
+                        help='output filename for table of all closed itemsets',
                         default='closed_itemsets.txt')
 
     optparser.add_option('-s', '--minsupport',
@@ -157,15 +155,21 @@ if __name__ == "__main__":
                         help='minimum support for apriori algorithm (0-1)',
                         default = 0.15,
                         type='float')
-    
-    (options, args) = optparser.parse_args()
 
-    # Load data
-    data = sio.loadmat(DATA_FILE_LOCATION)['data']
+    optparser.add_option('-i', '--input',
+                        dest='input_file',
+                        help='filename for .mat input data',
+                        default=os.path.join('data', 'dataAPRIORI.mat'))
+    
+    # Parse input arguments
+    (options, args) = optparser.parse_args()
     all_frequent_output_file = options.all_frequent_output_file
     closed_itemsets_output_file = options.closed_itemsets_output_file
     min_support = options.min_support
+    input_file = options.input_file
 
+    # Load data
+    data = sio.loadmat(DATA_FILE_LOCATION)['data']
 
     all_frequent_itemsets = apriori_(data, min_support)
 
