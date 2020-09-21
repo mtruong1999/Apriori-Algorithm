@@ -198,4 +198,4 @@ if __name__ == "__main__":
         f.write(tabulate(table, headers = ['Closed Itemset', 'Relative Freq.', 'Absolute Freq.']))
 
     with open(TIMING_RESULT_OUTPUT_FILE, 'w') as f:
-        f.write('Running time: {} seconds'.format(time_elapsed))
+        f.write('Running time: {} seconds\n'.format(time_elapsed))
