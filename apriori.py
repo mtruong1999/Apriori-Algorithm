@@ -13,25 +13,17 @@ import scipy.io as sio
 import numpy as np
 from tabulate import tabulate
 
-
 class CandidateItem(set):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.count = 0
 
-def union(list_1, list_2):
-    '''
-    Returns the union between two sets
-    '''
-    return list(set(list_1) | set(list_2))
-
 def generate_candidates(L_k, k):
-    '''
-    Returns list of candidates, C_(k+1) from L_k
+    """Returns list of candidates, C_(k+1), from L_k
     
     Assumes L_k in the format [[1, ..., k], [1, ... ,k], ...]
     Where each element in L_k is a frequent k-itemset
-    '''
+    """
     candidates = []
 
     # Iterate over every possible pair of transactions and 
@@ -48,32 +40,29 @@ def generate_candidates(L_k, k):
     candidates = [CandidateItem(candidate) for candidate in candidates]
 
     # Prune
-    # TODO: Verify this works for all edge cases
     candidates_to_remove = []
     for candidate in candidates:
-        # if theres any itemset of size k in candidates that are not in L_k, add it to the
+        # if there's any itemset of size k in each candidate that is not in L_k, add it to the
         # list of candidates to be removed
-        if any([c for c in itertools.combinations(candidate, k) if not any([it for it in L_k if len(set(c) & set(it)) == k])]):
+        if any([c for c in itertools.combinations(candidate, k) if not any([L for L in L_k if len(set(c) & set(L)) == k])]):
             candidates_to_remove.append(candidate)
     
-    for i in candidates_to_remove: # maybe create an array of true/false and filter the candidates array by that
+    for i in candidates_to_remove:
         candidates.remove(i)
     
     return candidates
 
 def count_candidates(C, transaction):
-    '''
-    Returns the count of the number of appearences of each
-    candidates in `C` found in `transaction`
-    '''
+    """Returns the count of the number of appearences of each
+    candidate in `C` found in `transaction`
+    """
     for candidate in C:
         if all(transaction[elem] == 1 for elem in candidate):
             candidate.count+=1
 
 def min_support_candidates(candidates, min_support):
-    '''
-    Returns the candidates that meets the min_support requirements
-    '''
+    """Returns the candidates that meets the min_support requirements""" 
+
     frequent_candidates = []
     for candidate in candidates:
         if candidate.count >= min_support:
@@ -81,10 +70,25 @@ def min_support_candidates(candidates, min_support):
     return frequent_candidates
 
 def apriori_(data, frequency):
-    '''
-    Runs APRIORI algorithm on data and returns all of the closed
+    """Runs APRIORI algorithm on data and returns all of the closed
     itemsets and their frequencies
-    '''
+
+    Parameters
+    ----------
+    data: 2-D numpy array
+        Matrix where each row is a transaction and the columns are items where
+        Mij = 1 indicates that item j is present in transaction i.
+    frequency: float
+        Min support 'relative' frequency
+
+    Returns
+    -------
+    Union_L
+        A list of lists, where each k-th list contains all the
+        frequent k-itemsets. Each set element is of the custom type
+        CandidateItem, which has an associated support count.
+        e.g. [ [{1}, {2}] , [{1,2}] ]
+    """
     k = 1
     absolute_freq = int(frequency * data.shape[0])
     single_itemset_count = np.sum(data, axis = 0)
@@ -169,7 +173,7 @@ if __name__ == "__main__":
     input_file = options.input_file
 
     # Load data
-    data = sio.loadmat(DATA_FILE_LOCATION)['data']
+    data = sio.loadmat(input_file)['data']
 
     all_frequent_itemsets = apriori_(data, min_support)
 
