@@ -142,10 +142,15 @@ def find_closed_itemsets(frequent_itemsets):
 if __name__ == "__main__":
     
     optparser = OptionParser()
-    optparser.add_option('-o', '--outfile',
-                        dest='output_file',
+    optparser.add_option('-a', '--allFrequentOut',
+                        dest='all_frequent_output_file',
                         help='filename for .mat input file',
                         default='all_frequent_itemsets.txt')
+
+    optparser.add_option('-c', '--closedItemsetsOut',
+                        dest='closed_itemsets_output_file',
+                        help='filename for .mat input file',
+                        default='closed_itemsets.txt')
 
     optparser.add_option('-s', '--minsupport',
                         dest='min_support',
@@ -157,7 +162,8 @@ if __name__ == "__main__":
 
     # Load data
     data = sio.loadmat(DATA_FILE_LOCATION)['data']
-    output_file = options.output_file
+    all_frequent_output_file = options.all_frequent_output_file
+    closed_itemsets_output_file = options.closed_itemsets_output_file
     min_support = options.min_support
 
 
@@ -165,7 +171,7 @@ if __name__ == "__main__":
 
     closed_itemsets = find_closed_itemsets(all_frequent_itemsets)
 
-    with open(output_file, "w") as f:
+    with open(all_frequent_output_file, "w") as f:
         table = []
         for L in all_frequent_itemsets:
             for itemset in L:
@@ -173,7 +179,7 @@ if __name__ == "__main__":
         f.write(tabulate(table, headers = ['Frequent Itemset', 'Count']))
     
     total_number_transactions = data.shape[0]
-    with open('closed_itemsets.txt', 'w') as f:
+    with open(closed_itemsets_output_file, 'w') as f:
         table = []
         for closed_itemset in closed_itemsets:
             table.append([set(closed_itemset), closed_itemset.count/total_number_transactions,closed_itemset.count])
