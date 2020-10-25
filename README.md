@@ -1,4 +1,4 @@
-# CS 521 Assignment 2: Apriori Algorithm to Find Closed Itemsets
+# Apriori Algorithm to Find Closed Itemsets
 ## Overview
 The code implements the apriori algorithm to find all frequent itemsets and extract the closed itemsets. The input data is assumed to be a 2-D matrix where each row is a transaction and each column j indicates (using 1 or 0) whether item j is present.
 
