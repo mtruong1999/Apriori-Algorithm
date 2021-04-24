@@ -165,7 +165,7 @@ if __name__ == "__main__":
     optparser.add_option('-i', '--input',
                         dest='input_file',
                         help='filename for .mat input data',
-                        default=os.path.join('data', 'dataAPRIORI.mat'))
+                        default=os.path.join('test_data', 'dataAPRIORI.mat'))
     
     # Parse input arguments
     (options, args) = optparser.parse_args()
